@@ -24,5 +24,37 @@
 
 package com.byteslounge.lens4j.internal.lens;
 
-public class Lens<S, T> {
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+public class Lens<T, U> {
+
+    private final Function<T, U> getter;
+    private final BiFunction<T, U, T> setter;
+
+    public Lens(Function<T, U> getter, BiFunction<T, U, T> setter) {
+        this.getter = getter;
+        this.setter = setter;
+    }
+
+    public U get(T target){
+        return getter.apply(target);
+    }
+
+    public T set(T target, U value){
+        return setter.apply(target, value);
+    }
+
+    public <R> Lens<T, R> compose(Lens<U, R> lens){
+        return new Lens<>(
+                target -> lens.getter.apply(getter.apply(target)),
+                (target, value) -> setter.apply(
+                        target,
+                        lens.setter.apply(
+                                getter.apply(target),
+                                value
+                        )
+                )
+        );
+    }
 }

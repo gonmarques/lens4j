@@ -31,7 +31,63 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LensTest {
 
     @Test
-    public void test() {
-        assertEquals(1 , 1);
+    public void getValue() {
+        Person person = new Person("john", new Employer("acme"));
+        Lens<Person, String> personNameLens = new Lens<>(p -> p.name, Person::setName);
+        String name = personNameLens.get(person);
+        assertEquals("john" , name);
+    }
+
+    @Test
+    public void setValue() {
+        Person person = new Person("john", new Employer("acme"));
+        Lens<Person, String> personNameLens = new Lens<>(p -> p.name, Person::setName);
+        Person other = personNameLens.set(person, "smith");
+        assertEquals("john" , person.name);
+        assertEquals("smith" , other.name);
+    }
+
+    @Test
+    public void getNestedValue() {
+        Person person = new Person("john", new Employer("acme"));
+        Lens<Person, String> personEmployerNameLens = new Lens<>(p -> p.employer, Person::setEmployer)
+                .compose(new Lens<>(e -> e.name, Employer::setName));
+        String name = personEmployerNameLens.get(person);
+        assertEquals("acme" , name);
+    }
+
+    @Test
+    public void setNestedValue() {
+        Person person = new Person("john", new Employer("acme"));
+        Lens<Person, String> personEmployerNameLens = new Lens<>(p -> p.employer, Person::setEmployer)
+                .compose(new Lens<>(e -> e.name, Employer::setName));
+        Person other = personEmployerNameLens.set(person, "other");
+        assertEquals("acme" , person.employer.name);
+        assertEquals("other" , other.employer.name);
+    }
+
+    private class Person {
+        final String name;
+        final Employer employer;
+        Person(String name, Employer employer) {
+            this.name = name;
+            this.employer = employer;
+        }
+        Person setName(String name){
+            return new Person(name, employer);
+        }
+        Person setEmployer(Employer employer){
+            return new Person(name, employer);
+        }
+    }
+
+    private class Employer {
+        final String name;
+        private Employer(String name) {
+            this.name = name;
+        }
+        Employer setName(String name){
+            return new Employer(name);
+        }
     }
 }
