@@ -26,6 +26,7 @@ package com.byteslounge.lens4j.internal.lens;
 
 import org.junit.jupiter.api.Test;
 
+import static com.byteslounge.lens4j.internal.lens.Lens.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LensTest {
@@ -33,7 +34,7 @@ public class LensTest {
     @Test
     public void getValue() {
         Person person = new Person("john", new Employer("acme"));
-        Lens<Person, String> personNameLens = new Lens<>(p -> p.name, Person::setName);
+        Lens<Person, String> personNameLens = of(p -> p.name, Person::setName);
         String name = personNameLens.get(person);
         assertEquals("john" , name);
     }
@@ -41,7 +42,7 @@ public class LensTest {
     @Test
     public void setValue() {
         Person person = new Person("john", new Employer("acme"));
-        Lens<Person, String> personNameLens = new Lens<>(p -> p.name, Person::setName);
+        Lens<Person, String> personNameLens = of(p -> p.name, Person::setName);
         Person other = personNameLens.set(person, "smith");
         assertEquals("john" , person.name);
         assertEquals("smith" , other.name);
@@ -50,8 +51,8 @@ public class LensTest {
     @Test
     public void getNestedValue() {
         Person person = new Person("john", new Employer("acme"));
-        Lens<Person, String> personEmployerNameLens = new Lens<>(p -> p.employer, Person::setEmployer)
-                .compose(new Lens<>(e -> e.name, Employer::setName));
+        Lens<Person, String> personEmployerNameLens = of(p -> p.employer, Person::setEmployer)
+                .compose(of(e -> e.name, Employer::setName));
         String name = personEmployerNameLens.get(person);
         assertEquals("acme" , name);
     }
@@ -59,8 +60,8 @@ public class LensTest {
     @Test
     public void setNestedValue() {
         Person person = new Person("john", new Employer("acme"));
-        Lens<Person, String> personEmployerNameLens = new Lens<>(p -> p.employer, Person::setEmployer)
-                .compose(new Lens<>(e -> e.name, Employer::setName));
+        Lens<Person, String> personEmployerNameLens = of(p -> p.employer, Person::setEmployer)
+                .compose(of(e -> e.name, Employer::setName));
         Person other = personEmployerNameLens.set(person, "other");
         assertEquals("acme" , person.employer.name);
         assertEquals("other" , other.employer.name);

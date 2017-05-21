@@ -22,43 +22,36 @@
  * SOFTWARE.
  */
 
-package com.byteslounge.lens4j.internal.lens;
+package com.byteslounge.lens4j.output.domain;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import com.byteslounge.lens4j.internal.lens.Lens;
 
-public class Lens<T, U> {
+public class Address {
 
-    private final Function<T, U> getter;
-    private final BiFunction<T, U, T> setter;
+    public static final Lens<Address, String> addressStreetLens = Lens.of(i -> i.street, Address::lens$withStreet);
+    public static final Lens<Address, Integer> addressNumberLens = Lens.of(i -> i.number, Address::lens$withNumber);
 
-    private Lens(Function<T, U> getter, BiFunction<T, U, T> setter) {
-        this.getter = getter;
-        this.setter = setter;
+    private final String street;
+    private final Integer number;
+
+    public Address(String street, Integer number) {
+        this.street = street;
+        this.number = number;
     }
 
-    public U get(T target){
-        return getter.apply(target);
+    public String getStreet() {
+        return street;
     }
 
-    public T set(T target, U value){
-        return setter.apply(target, value);
+    public Integer getNumber() {
+        return number;
     }
 
-    public <R> Lens<T, R> compose(Lens<U, R> lens){
-        return new Lens<>(
-                target -> lens.getter.apply(getter.apply(target)),
-                (target, value) -> setter.apply(
-                        target,
-                        lens.setter.apply(
-                                getter.apply(target),
-                                value
-                        )
-                )
-        );
+    private Address lens$withStreet(String street){
+        return new Address(street, number);
     }
 
-    public static <T, U> Lens<T, U> of(Function<T, U> getter, BiFunction<T, U, T> setter) {
-        return new Lens<>(getter, setter);
+    private Address lens$withNumber(Integer number){
+        return new Address(street, number);
     }
 }

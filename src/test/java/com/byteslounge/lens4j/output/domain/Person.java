@@ -22,43 +22,36 @@
  * SOFTWARE.
  */
 
-package com.byteslounge.lens4j.internal.lens;
+package com.byteslounge.lens4j.output.domain;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import com.byteslounge.lens4j.internal.lens.Lens;
 
-public class Lens<T, U> {
+public class Person {
 
-    private final Function<T, U> getter;
-    private final BiFunction<T, U, T> setter;
+    public static final Lens<Person, String> personNameLens = Lens.of(i -> i.name, Person::lens$withName);
+    public static final Lens<Person, Address> personAddressLens = Lens.of(i -> i.address, Person::lens$withAddress);
 
-    private Lens(Function<T, U> getter, BiFunction<T, U, T> setter) {
-        this.getter = getter;
-        this.setter = setter;
+    private final String name;
+    private final Address address;
+
+    public Person(String name, Address address) {
+        this.name = name;
+        this.address = address;
     }
 
-    public U get(T target){
-        return getter.apply(target);
+    public String getName() {
+        return name;
     }
 
-    public T set(T target, U value){
-        return setter.apply(target, value);
+    public Address getAddress() {
+        return address;
     }
 
-    public <R> Lens<T, R> compose(Lens<U, R> lens){
-        return new Lens<>(
-                target -> lens.getter.apply(getter.apply(target)),
-                (target, value) -> setter.apply(
-                        target,
-                        lens.setter.apply(
-                                getter.apply(target),
-                                value
-                        )
-                )
-        );
+    private Person lens$withName(String name){
+        return new Person(name, address);
     }
 
-    public static <T, U> Lens<T, U> of(Function<T, U> getter, BiFunction<T, U, T> setter) {
-        return new Lens<>(getter, setter);
+    private Person lens$withAddress(Address address){
+        return new Person(name, address);
     }
 }
