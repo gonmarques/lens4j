@@ -49,6 +49,15 @@ public class LensTest {
     }
 
     @Test
+    public void modifyValue() {
+        Person person = new Person("john", new Employer("acme"));
+        Lens<Person, String> personNameLens = of(p -> p.name, Person::setName);
+        Person other = personNameLens.modify(person, String::toUpperCase);
+        assertEquals("john" , person.name);
+        assertEquals("JOHN" , other.name);
+    }
+
+    @Test
     public void getNestedValue() {
         Person person = new Person("john", new Employer("acme"));
         Lens<Person, String> personEmployerNameLens = of(p -> p.employer, Person::setEmployer)
@@ -65,6 +74,16 @@ public class LensTest {
         Person other = personEmployerNameLens.set(person, "other");
         assertEquals("acme" , person.employer.name);
         assertEquals("other" , other.employer.name);
+    }
+
+    @Test
+    public void modifyNestedValue() {
+        Person person = new Person("john", new Employer("acme"));
+        Lens<Person, String> personEmployerNameLens = of(p -> p.employer, Person::setEmployer)
+                .compose(of(e -> e.name, Employer::setName));
+        Person other = personEmployerNameLens.modify(person, String::toUpperCase);
+        assertEquals("acme" , person.employer.name);
+        assertEquals("ACME" , other.employer.name);
     }
 
     private class Person {

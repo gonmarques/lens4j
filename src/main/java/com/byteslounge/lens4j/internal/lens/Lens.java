@@ -26,6 +26,7 @@ package com.byteslounge.lens4j.internal.lens;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public class Lens<T, U> {
 
@@ -43,6 +44,10 @@ public class Lens<T, U> {
 
     public T set(T target, U value){
         return setter.apply(target, value);
+    }
+
+    public T modify(T target, UnaryOperator<U> transformer){
+        return setter.apply(target, transformer.apply(getter.apply(target)));
     }
 
     public <R> Lens<T, R> compose(Lens<U, R> lens){
