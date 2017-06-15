@@ -24,12 +24,7 @@
 
 package com.byteslounge.lens4j.output.domain;
 
-import com.byteslounge.lens4j.internal.lens.Lens;
-
 public class Person {
-
-    public static final Lens<Person, String> personNameLens = Lens.of(i -> i.name, Person::lens$withName);
-    public static final Lens<Person, Address> personAddressLens = Lens.of(i -> i.address, Person::lens$withAddress);
 
     private final String name;
     private final Address address;
@@ -45,13 +40,5 @@ public class Person {
 
     public Address getAddress() {
         return address;
-    }
-
-    private Person lens$withName(String name){
-        return new Person(name, address);
-    }
-
-    private Person lens$withAddress(Address address){
-        return new Person(name, address);
     }
 }

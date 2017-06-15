@@ -29,9 +29,9 @@ import com.byteslounge.lens4j.output.domain.Person;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static com.byteslounge.lens4j.output.domain.Address.addressNumberLens;
-import static com.byteslounge.lens4j.output.domain.Address.addressStreetLens;
-import static com.byteslounge.lens4j.output.domain.Person.personAddressLens;
+import static com.byteslounge.lens4j.output.domain.AddressLens.addressNumberLens;
+import static com.byteslounge.lens4j.output.domain.AddressLens.addressStreetLens;
+import static com.byteslounge.lens4j.output.domain.PersonLens.personAddressLens;
 
 public class SampleOutputTest {
 

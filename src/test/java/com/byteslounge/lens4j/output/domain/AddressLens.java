@@ -24,21 +24,18 @@
 
 package com.byteslounge.lens4j.output.domain;
 
-public class Address {
+import com.byteslounge.lens4j.internal.lens.Lens;
 
-    private final String street;
-    private final Integer number;
+public class AddressLens {
 
-    public Address(String street, Integer number) {
-        this.street = street;
-        this.number = number;
+    public static final Lens<Address, String> addressStreetLens = Lens.of(Address::getStreet, AddressLens::lens$withStreet);
+    public static final Lens<Address, Integer> addressNumberLens = Lens.of(Address::getNumber, AddressLens::lens$withNumber);
+
+    private static Address lens$withStreet(Address address, String street){
+        return new Address(street, address.getNumber());
     }
 
-    public String getStreet() {
-        return street;
-    }
-
-    public Integer getNumber() {
-        return number;
+    private static Address lens$withNumber(Address address, Integer number){
+        return new Address(address.getStreet(), number);
     }
 }
